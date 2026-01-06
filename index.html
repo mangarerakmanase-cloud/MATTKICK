@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>MATTKICK - Toko Sepatu</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<section class="welcome">
+  <h1>👋 Selamat Datang di Toko Kami</h1>
+  <p>
+    Terima kasih telah berkunjung 😊  
+    Selamat berbelanja, semoga Anda menemukan produk yang sesuai dengan kebutuhan Anda.
+  </p>
+</section>
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+}
+
+.header {
+    background: #2c3e50;
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    color: #e74c3c;
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.cart {
+    cursor: pointer;
+    position: relative;
+}
+
+.cart span {
+    background: #e74c3c;
+    border-radius: 50%;
+    padding: 3px 7px;
+    font-size: 12px;
+    position: absolute;
+    top: -8px;
+    right: -10px;
+}
+
+.container {
+    padding: 15px;
+}
+
+.product {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+.product img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.price {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+button {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px;
+    width: 100%;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+/* POPUP KERANJANG */
+.cart-box {
+    display: none;
+    background: white;
+    position: fixed;
+    top: 60px;
+    right: 15px;
+    width: 300px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    z-index: 999;
+}
+
+.cart-item {
+    border-bottom: 1px solid #ddd;
+    padding: 5px 0;
+}
+
+/* SLIDER */
+.main-slider {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+
+.slides {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.slides img {
+    width: 100%;
+    flex-shrink: 0;
+}
+
+/* Tombol navigasi slider */
+.slider-nav {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+}
+
+.slider-nav button {
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px 12px;
+    border-radius: 50%;
+}
+
+/* MENU SEPATU ANAK */
+.kids-menu {
+    margin-bottom: 15px;
+}
+
+.kids-menu button {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    margin-right: 8px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.kids-menu button:hover {
+    background: #2980b9;
+}
+
+.footer {
+    background: #2c3e50;
+    color: white;
+    text-align: center;
+    padding: 15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <div>
+        <div class="logo">MATTKICK</div>
+        <small>Toko Sepatu Online</small>
+    </div>
+
+    <div class="cart" onclick="toggleCart()">
+        🛒 Keranjang
+        <span id="cartCount">0</span>
+    </div>
+</div>
+
+<!-- SLIDER UTAMA (DEWASA) -->
+<div class="main-slider" id="mainSlider">
+    <div class="slides" id="mainSlides">
+        <img src="https://photo-fhad-fithub.s3.ap-southeast-1.amazonaws.com/Kenzo_Run_31c323e0f8.jpg" alt="Runner Pro">
+        <img src="https://cf.shopee.co.id/file/sg-11134201-7rav4-mb3lpl3io6767a" alt="Urban Sneakers">
+        <img src="https://down-id.img.susercontent.com/file/id-11134207-7r98o-lla3skd1t84762" alt="Adventure Trek">
+    </div>
+    <div class="slider-nav">
+        <button onclick="prevSlide('main')">&#10094;</button>
+        <button onclick="nextSlide('main')">&#10095;</button>
+    </div>
+</div>
+
+<div class="cart-box" id="cartBox">
+    <h4>Keranjang</h4>
+    <div id="cartItems"></div>
+    <p><strong>Total: Rp <span id="total">0</span></strong></p>
+</div>
+
+<!-- MENU SEPATU ANAK -->
+<div class="container">
+    <h2>Sepatu Anak</h2>
+    <div class="kids-menu">
+        <button onclick="filterKidsSlider('sneakers')">Sneakers</button>
+        <button onclick="filterKidsSlider('sport')">Sport</button>
+        <button onclick="filterKidsSlider('casual')">Casual</button>
+    </div>
+</div>
+
+<!-- SLIDER SEPATU ANAK -->
+<div class="main-slider" id="kidsSlider">
+    <div class="slides" id="kidsSlides"></div>
+    <div class="slider-nav">
+        <button onclick="prevSlide('kids')">&#10094;</button>
+        <button onclick="nextSlide('kids')">&#10095;</button>
+    </div>
+</div>
+
+<div class="container" id="kidsProducts"></div>
+
+<div class="container">
+    <!-- PRODUK DEWASA -->
+    <div class="product">
+        <img src="https://photo-fhad-fithub.s3.ap-southeast-1.amazonaws.com/Kenzo_Run_31c323e0f8.jpg" alt="MATTKICK Runner Pro">
+        <h3>MATTKICK Runner Pro</h3>
+        <p class="price">Rp 850.000</p>
+        <button onclick="addToCart('Runner Pro', 850000)">Tambah ke Keranjang</button>
+    </div>
+    <div class="product">
+        <img src="https://photo-fhad-fithub.s3.ap-southeast-1.amazonaws.com/Ortuseight_Hyperblast_c1e9590921.jpg" alt="MATTKICK Runner Pro">
+        <h3>MATTKICK Runner Pro</h3>
+        <p class="price">Rp 899.000</p>
+        <button onclick="addToCart('Runner Pro', 899000)">Tambah ke Keranjang</button>
+    </div>
+
+    <div class="product">
+        <img src="https://cf.shopee.co.id/file/sg-11134201-7rav4-mb3lpl3io6767a" alt="MATTKICK Urban Sneakers">
+        <h3>MATTKICK Urban Sneakers</h3>
+        <p class="price">Rp 750.000</p>
+        <button onclick="addToCart('Urban Sneakers', 750000)">Tambah ke Keranjang</button>
+    </div>
+     <div class="product">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUgQVwGmnP78I-WId6v0ztnZXAG7UcsSD_UA&s" alt="MATTKICK Adventure Trek">
+        <h3>MATTKICK Shoes Slip On</h3>
+        <p class="price">Rp 299.000</p>
+        <button onclick="addToCart('Adventure Trek', 1200000)">Tambah ke Keranjang</button>
+    </div>
+    
+    <div class="product">
+        <img src="https://down-id.img.susercontent.com/file/id-11134207-7r98o-lla3skd1t84762" alt="MATTKICK Adventure Trek">
+        <h3>MATTKICK Adventure Trek</h3>
+        <p class="price">Rp 1.200.000</p>
+        <button onclick="addToCart('Adventure Trek', 1200000)">Tambah ke Keranjang</button>
+    </div>
+    <div class="product">
+        <img src="https://static.desty.app/desty-store/2023-09-21/1695264861574dcf84e415b244f108f23e27df076e63a.jpg?x-oss-process=image/resize,w_500/format,webp" alt="MATTKICK Adventure Trek">
+        <h3>MATTKICK Adventure Trek</h3>
+        <p class="price">Rp 1.250.000</p>
+        <button onclick="addToCart('Adventure Trek', 1200000)">Tambah ke Keranjang</button>
+    </div>
+
+</div>
+<div class="product">
+        <img src="https://cdn11.bigcommerce.com/s-98f3d/images/stencil/1280x1280/products/1689/37461/Rocky_Mens_Zipper_Jump_Boot_Black_Military_Duty_main__77132.1754934956.jpg?c=2" alt="MATTKICK Adventure Trek">
+        <h3>MATTKICK MEN Boot Shoes</h3>
+        <p class="price">Rp 1.200.000</p>
+        <button onclick="addToCart('Adventure Trek', 1200000)">Tambah ke Keranjang</button>
+    </div>
+    <div class="product">
+        <img src="https://www.ginomariani.com/cdn/shop/files/id-11134207-7rash-m3g3jkqbpwir5f.jpg?v=1757305082&width=1445" alt="MATTKICK Boot">
+        <h3>MATTKICK Women Boot</h3>
+        <p class="price">Rp 1.000.000</p>
+        <button onclick="addToCart('Urban Sneakers', 1000000)">Tambah ke Keranjang</button>
+    </div>
+    <div class="product">
+        <img src="https://www.footlocker.id/media/catalog/product/cache/f57d6f7ebc711fc328170f0ddc174b08/0/1/01-CONVERSE-FFSSBCONA-CON162050C-Black.jpg" alt="MATTKICK Converse 70 High">
+        <h3>MATTKICK converse 70s High</h3>
+        <p class="price">Rp 999.000</p>
+        <button onclick="addToCart('Urban Sneakers', 999000)">Tambah ke Keranjang</button>
+    </div>
+    
+    <div class="product">
+        <img src="https://www.converse.id/media/catalog/product/cache/ae7cee22ac1ff58c2794c87414f27b45/0/8/0888-CON162058C000003-1.jpg" alt="MATTKICK Converse 70 High">
+        <h3>MATTKICK converse 70s Low</h3>
+        <p class="price">Rp 799.000</p>
+        <button onclick="addToCart('Urban Sneakers', 999000)">Tambah ke Keranjang</button>
+    </div>
+    <div class="product">
+        <img src="data:image/jpeg;base64,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" alt="MATTKICK Converse 70 High">
+        <h3>MATTKICK Farm Boot</h3>
+        <p class="price">Rp 99.000</p>
+        <button onclick="addToCart('Urban Sneakers', 999000)">Tambah ke Keranjang</button>
+    </div>
+
+    <div class="product">
+        <img src="https://www.happystore.id/_next/image?url=https%3A%2F%2Fcf.shopee.co.id%2Ffile%2Fid-11134207-7rash-m5juk0mck6n1fd&w=1200&q=75" alt="MATTKICK Converse 70 High">
+        <h3>MATTKICK High Heels</h3>
+        <p class="price">Rp 499.000</p>
+        <button onclick="addToCart('Urban Sneakers', 999000)">Tambah ke Keranjang</button>
+    </div>
+
+    <div class="product">
+        <img src="https://assets.cat5.com/images/catalog/products/6/3/6/7/4/6-650-dr.-martens-2976-slip-resistant-life-shield-waterproof-dark-tan.jpg?v=67388"alt="MATTKICK">
+        <h3>MATTKICK Men's Dr. Marten's 2976 Slip Resistant Life Shield Waterproof</h3>
+        <p class="price">Rp 2.999.000</p>
+        <button onclick="addToCart('Urban Sneakers', 999000)">Tambah ke Keranjang</button>
+    </div>
+    <section class="product-section">
+  <h2 class="section-title">Produk Terbaru</h2>
+
+  
+     
+  </div>
+</section>
+
+
+<div class="footer">
+    © 2026 MATTKICK
+</div>
+
+<script>
+// KERANJANG
+let cart = [];
+let total = 0;
+
+function addToCart(name, price) {
+    cart.push({name, price});
+    total += price;
+    updateCart();
+}
+
+function updateCart() {
+    document.getElementById('cartCount').innerText = cart.length;
+    document.getElementById('total').innerText = total.toLocaleString();
+
+    let items = '';
+    cart.forEach(item => {
+        items += `<div class="cart-item">${item.name} - Rp ${item.price.toLocaleString()}</div>`;
+    });
+    document.getElementById('cartItems').innerHTML = items;
+}
+
+function toggleCart() {
+    const box = document.getElementById('cartBox');
+    box.style.display = box.style.display === 'block' ? 'none' : 'block';
+}
+
+// SLIDER DEWASA
+const mainSlides = document.getElementById('mainSlides');
+const mainImages = mainSlides.querySelectorAll('img');
+let mainIndex = 0;
+let mainSlideInterval = setInterval(() => {
+    nextSlide('main');
+}, 3000);
+
+// DATA SEPATU ANAK (GAMBAR NYATA)
+const kidsProductsData = [
+    {category: 'sneakers', img: 'data:image/jpeg;base64,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', name: 'Kids Sneakers 1', price: 300000},
+    {category: 'sneakers', img: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxAPEBUQEBAVDxUVEBUQFRAVEA8QFRYQFRUWFxUVFRUYHSggGBomGxUVITEhJSkrLi4uGB8zODMsNygtLisBCgoKDg0OGBAQGi0dHx0tKy8vKzUrLSsuLSstLS0tLTAvKy0tLS0tLSstKy03Ky0tLSstLS0rLS0tLS0tLS0tNv/AABEIAOEA4QMBIgACEQEDEQH/xAAcAAACAgMBAQAAAAAAAAAAAAAAAQIGAwQFBwj/xABHEAACAQIDBQUFBQQHBgcAAAABAgADEQQSIQUGMUFREyJhcYEHMpGhsRRCcsHRUmLh8CMzNHOSorJEY5OzwvEWJDVDU4KD/8QAGQEBAQADAQAAAAAAAAAAAAAAAAECAwQF/8QAIxEBAAICAwEAAgIDAAAAAAAAAAECAxESITEEQUIzcRMiMv/aAAwDAQACEQMRAD8A9LAjgI55L1DtC0YjgKOKOEEIRwFHCFoUQtC0IQWhaF4XgK0doXjvIFaFo7wvCi0IQhBFaEIUWkTHFaArTcwlLmZiw9K5m+BOv58f7S5c+T9YEI7QnY5ShHFA5MIRzyXqC0I4QghCO8AjihCnCEIQQhCAQhCQEIQvCiEIQgitJQgQtHJQtCoxotzGBNvC0uZm3Fj52015MnGGWjTsJO0lFPSiNPPmdi0LQhAIRwgcaEULzyXpnC8V4XhTvASN4XgTvC8x3jvIMkJANGDAnCISaL10mdaWtOoYWvFY3JAXmVMP10+BnN2pvHhsJ3XfM4/9tQrPfx5L6mUnbO/WIq92hagp5ghnt4seHoPWdlPnrHvblvntPnT0uo9GkLuyr4sygfOaR3iwINvtFL/GD9J4zUxVQklnZyeJJJJ9TMYN+Zm6KxHjTNpn17hh9pYOscqVqZPQOoPwMlWpFT16HrPD1ve+aXrc3eJywwtZiwb+rJNyGHK/Qi/ymnNiia7j2G3FkmJ0ukULzlbxbVXDUXs1qho1npC17tTTMbeQ1tOB2TOo3LofaEsGzrYtkBuLFs2XL530tM1p4e+3cS+ULUYA1FqAggf01rGpw0JFiR4nqZ6LuJtOpjGd6tRncKFCaKipfiQLZnJF72NhbXW0sRvxzU+mtrcVxoUsxm6BFTSwtJz0sVOFdNOS/KShHCbGBQhCAQhCBxIrxEyJM8l6iV4i0heLNIMl4s0xlpEtAy5oAk8BeZMLh82raD04TNjMdh8Kuaq60+epsT5KNTOinzzbuemi+eK9R2hTw7Hl/PlNpMPl4yo7S9o1FNKVJn/ea1Meg1J+UrmP31xVe4VuzHRND8eM6qYa07hzXy2t69B2ptWhhheo4vyUasellv8AM2E8/wBub5YmtdaS9gnC6uM5H7zaW8h85wqldmu1TXmST8yTNDCVhiGK0zmHaCmLXGZza2U9NbX8dOs2sA+IbnSJsCT3lOnG+l/nxmid4EOiUCT0LgD5CXLE7sVadB6lN1rpTqNRq9mH7lVff1I76htCw4EHobUAolO4UcCRfyMI3m2rWtotNNOSljbzJmKptusPv/5U/SaNbEaaTUYkwOwm8dX7yo//ANcp+X6Sz7sY5K1WnUp3VkqoGpk8LtoQeYlBFFj+k9D9m2wKiE4mqCqkBaYIsWsb5rfs3tY87dJhktFazMs6Vm1oiHR9o28uLo1qVDDVuwDpq4VScxYgXJ4AacOspGIxlZ2Hb169ZwcpNU3AbhUCi/dF7jjyEs/tRot3KqaMqgg2BAIJ/MqfSPB7CTH4dMYtdruATpYGsAuYFL2vclbjkvhOC38cabfox2vMxEuJs/skAvcm+igAkcrcdOes9L9k5w7LXKACqrqraEEIRdeJ4XzcOY4nS1Gr7GFPEIKxoFLas1daRIHH3eB+Wms3dwtsJT249OiwNGsOwUKQRYUlZSCCb99SL/vGPkp/vuXFTBas8rPbY5EGOek2iEI4CikooChJQgV4mQYxkzGxnkPUBMiWiJkYVK8BxkZp7Yrmnh6tReKodel9L+l7zKkbtEMbzqsuXvBvgUJo4YgEXDVrA2PMUwdPWU6tiS5LMWqMdSzsSSfG80sPU6ydStfQT1XmNfFuSfHwjFVKS53Nh8ST0A5mRxFVKal3NgPK5PQeMreLxbVmzHQDRVHBR+vjA2dpbUev3fcTlTB4/jPPy4fWdjdvDN2S5VLNUqllVQSx4KLAa8VMrVNCSAOLEKPMmw+s9E2JUfDVqbUkL9mtstj7mXK2q6g2J15SC2btb14nDVfs+0Q2Vra1KYR0B0uRYZkOtzx48eEoXtQ3ebAYwlVtRrlqlEjgNbvT8MpbTwK+M9N2PXwW0qAwL0zQammWizP2r2txWo3eZrC5DceOvKO+27VfFbOw2EZlq1qdSmGrnughKbK1UjiCwt3RfVreMo8Ew2HZyAAWJNgoBJJ6ADjLrsT2e4utZqijDqeJqG7Afu011/xFZ6LuzurQwC9wZ6hFmrMBfxCj7q+HxvLAggVLZO4mEwxDlTXcfef3QfCnw+NzOtiFIndVRIVMIG0AvflOPLgtPcTt14s9Y6mNPNt8gXok/s3+B/iBPNKWzGI71Wp3jmIBCgk6k2Gk952jsBaqsoNswINxcSs4b2duQM9VQOGisdBwMnyz7B9MeS85wmzqa8EU+LU6TH4lbz0j2c7IqM/2ipcIl+zXUA1LWuBwsAT6zrYHcPDoQXY1LcrBRLXQoqihVAUAWAAsAJ2uR0KTTIJrUjNgQJRxRiARwhAIQjgVlhMZmZpgeeQ9RAmERmTD0S7WHx6CIiZnUEzERuSp0yxsJkx2BWrQqUTwqU2pk/iUi/znSWgEFh8Zr1DPRxYYp3Prhy5Zv548KpuULLU7roSrjo40OnjMhYKpZ9BxJPISw7/7J7LEpilXu1CEflapyJ9fqZ5/tvaXatkQ9xT/AImHPy6Ta1NfH4w1mudANFXoOp8TNYGRLdIQOnsJc2IpDiM+bh+yCfynpu728a4IkOrEMyt3CoYlb9034qb8LjgJ5tu2L4hfBX/0n9TPVN2tuYfDplrKRZmZgKKVO2BACqWOq5ddOBvKizYbEYXbCK9InC4qk6VVNgWBpsDYkW7SmeBHGzcpYNpgll10AOnicv6GV+hsPB4x6WN2fX+zvSqioRTUFTdSrJUpG2UFSRYW6jXWWTGJ3vSBzmWadfFZOM6jJNDG4XMIFd3s3w+xYR69NA7hkVVa+W7OASba6AkyhN7XtpE3RMNTFrW7KrUPxNQfSZPaljgKZwq6kMj1TyUZhkXzJ18h4yibHwRrsQWyKoBYjjroAP1gerbpe0tqlRKeOVFV3CdtTDJlY6DOhJ7pOhYHTpbUetPTE+esJsbDpa9I2I0LZjnte5vz48AbcJycRQdGKsrhc7Bbq4Urm0tfQixHxmNaVr5DK1pt6+icdtXCUBetiaNLwarTU+gvc+klsbaWHxlPtcPUFVMxUkBlIYcipAI66jnPnBUQdF9Q3+m89A9km1ko4o0C+lZMoFmy9qmq6m1jbOOGtxKxewolplUSIk1lDtCOEgIQhKCEIQK20xOt5uVsKy/vDy19RNYzy70ms6l6VbxbxrsJPDVsp85JlnF3kxLUKLVV+53rZb3A+YI4yUtxtEl45VmFqTFBuOhmKtOVs7HLXpJVXg6hrcx4Tb7U+c9SJ3G3my5+39nriKD0mF8ym34uXznztXw5puyH7rEdNOXyn0uzAzxX2lbJ+zYztALJWGcdAw94fSJVUlWTCco1HXTw/XpJmpb+GmnieJkHT3fpMK6MbKLsurAEllI0XiePSem7lYnAWqJjFQliCr1ELLlA1UEe6b63nj+Hx3ZOrAXKurBepUg28pYqW8ZIFqC8zYs+nThx6+vhKj2ehvpsfDnS2FBY0w/2ZkVrC97oui8NWtylgotTdRUpP2iPeorZzUBDnNdSSe7roOAGg0nzNtXH1K5GewC3sq6AX4nxPDjPZfZBVdtmqGJIWrUCXJPdzG4Hhe8ou2Wa20XFOmznkL+s3BODvRirKKY5m5geX72bFr16GWjT7StiMWrMNPds5uSeCiy68pYN2d0cDsvDipjWp1KhbOzsCVvoAiJxcDyOpJsL6d3ZVQElQO8eBsTYDU8Jk2kuAogviwGBa96i1avet90G9tBwW3CBXN5t58Pi1KURVsRSARwi06fZGp3qS3JDMHAPDRBPNdsp/wCYYnmFb/KB+RnqO8eE2ScIa+ENNWOq5ar5jUzoMnZMbhcpc8BawnmO2f61T/ux9WgayADjpNjCYk03V6ejowdTwsym6n4iYEELkHQ/K8ivprZG0ExVCniE92pTWoB0uNQfEG49JvLPNfY3tsPQfBOe/SY1U8aVQ3YDye/+IT0lZUZIQhAIQhICEISjVImCvhlbiNeomzFaSYiY1KxMx3DjV8MyeI6/rKjtvDVw7d8mm3e1IZVAsSLH3TobHhrPRHWUzeXG01Z6D03TMos2mVgSL26c9eonHlwRXuHTTNvqzl7v42yvYZUSqRYDQK2oP1+UsFOrecbZOE99EawVgG6kkDX+ek3/ALKafuHT9nl/CYYvomnUx0ztg5RuJ7b3GVb2ibMFfBO+XM9K1VeN9CM3+W/wlgpV76HQ9D+XWZ3AYFSLgixHUHjO6totG4clqzWdS+b3fix1A6a3P5zm4jFs3DujoPzPOek72bjYlKrNh6RxFJjfu5Myk8it7nzAlcXczHHQYKr6qF+plYqrhqxpsDxHMSx4HHUmFr8uE2v/AADtI8MC/wDxMOP+ucza26OOwydrVwrogNi10cA9TkJsPE6SjoYmmDqNRPa/ZL/6VS/vK3/OefPOy8RWzhUDVr6ZFDO2vS2s+lvZvs2phtnUUqqUc56mQ6Fe0dmAYcjYjTrAsrtlUkyhbdx2aoTfQSy7w4/IhAM87xFQ1XtyBux6npJKw3sJtxMKGxFUlaaqASBmIQsLtb4ek6tZNl4wLiK4K5xkSpW+04Y2bknaZRrlvpxtOdsyrTpMalUXVFzWylyWuAoVQCWa5AAAuTa0sm0KWDxZXD4ogOwFRELNSe5uLre1zx089IglTt490aOGJNDEM57A4kUWS47BXVGPar3b3cWBFzYygbYP9MB/ux9WnoG8+xMTgkNBcX2+HXIxo9p36auT2ZqUxwUlWAPC44CecbUe9dvCy/AD87yoksLXIAFyTYAcSToAJBW0lg3awI/tDi1tKYPzf8h6npIrv7u02wIR6YvVVhVex982s1O/TKWUdCbz2DBYpKtNaiG6uoZT4H6GeQrWvrLruRjgM1A6Ak1FHRjrUA8z3vVpUXQRyCGTgEIQgEIQgYbQtHCBEic7aWCp1bZ0DWNwSAbHwvwnSMw1VvAqm7mD7I11bvXrEC/HIPdPz+U6tbBG111HTn/Gcfeui1Je2RitnXMQbcPdJ9QvwEtWGfMit1UH4ic/+Ktt1mPG2Mk1ncK5WwwPKYgWTj3h8/4yyYjCq3ges5eJwpXiPXlOa2O+Gd18dVclMsalqo4Oo1mQAGadakRquh/niJGljNbN3T8j5H8p0YvorbqepaMnzzXuO4dFHtx1+s26RU9JzhVkg3Qzpc7r4TDKPdAUcTYAfSZsVXCKTw0mPC1e4DwEq+9G2gAVBgcjeLaJqPlU6nh4DmZo0KIUWEhhqZJLtxPyHITjbzbzrhr0qVnq8+ap+LqfD4+MVcdiYrDUqoNatSpudKa1KiIWbmVDG5OttOs7eMwWD2kXw1Sy1qY0aw7RQQCGX9tNRcdehsZ85Yl3qsXqMajHizak/wAPCW3cXabDLZiXw9QVFuT7htpfjbiLdDaVFm3ixGMpu+GxIQN3M9RKaq1daYtSZ34uACbdNeYnnVR7uzdWJ+JM9P3g2x9rsCHJFR6pao6ORnAHZUwqgBBYWGpPOUrC7AsxaubDMbUh7zC/3j90eHHytA19kbONc5jpTB7zcL2+6PHy4ectFWqOA0UC2UcBblNSrWFsqiwGgUcAOgkEf4QN5HsOk6+ysYadRXU6hgZxUsePw5CW/d7dWtWAapejT4gkd9vwqeHmfnA9Ew1QMoYcCAw8iLzYE18PSFNQg0CqFGt9ANNZsCAQjigEIQgYoQhAUREcIHO2pgRVpshGYFSLaenznC2LtJ6YFKqroFGUM9r2FrDQ69PTnLdaaOPwSVFIZQfSYzXc7hlE/iWnu5tU4ukajKEIqMuUG/dsGW/jZhfxBnRdQZTvsdfBNU7GplV7EAjtArDnr1E7uwdovWQiqqq6kA5SbMCLhgDqOeh6TGtv1t6TH5hLF4DmvwP5Th4zD8QR6GWp5o4yiHGo9ec05fmi3dem/H9E16t2qqVHpc869DxHkfyM3sPjFcXBv+XmJjx+DZeHeHXmPMTjOpU5lNj1H86zTXLfFPG/jbbFTLG6u3tHbPZU8g48vKUvE41STVquFRT7xNgW/PwH8Jrbf22ahKBghtlLqpbnyudD8ZXa+ASoQ1SpUq24XZFAHRVtZfSd0TvtxTGuktt74PUBp4a9NeBqnRz+EfcHjx8pWUT/ALnr5yyU9m4cfczedRvym3SprT9ymi+OUEm/iZkiuYfA1anu02I65SB8TpOrsTYdajWFRmVNCpF8xIPLoPOdkYkkcZjWoeUDfWsRooseubMevH4/zaadao2a1iPOFKg9QhVDMxNgqgsSfADjLxsLcOtWUHFE0QSCF7rVMvzCwKRQos7WALE8FUXJPgJbti7j4uoLuq4dTzc3a34B9CRPRdk7Dw2EH9FTCk6FrAuT4t+QnQNcC9uX6QOFsLc/D4WzG9Zx99wLA/upy9dZYCQPhxmMuSR5cYgvrpb+RAZOsyrMBmZIE4o4QFCEIGGOKEAhCEAkWW8nFA5W1dmdtTZLlbjRhfQ8QZTMuLwTDOLgMP6TMCMtwCB94jwIno5E5e18AtVdRfQi3gRrNWTHy7/LKttS0q23qIqU6QuzVLEAW7qm/eY+h+E6DpeVrdrADtqrPc1AQoJ4CkeGX6ennLf2cyx2m0blLRqXJrUZyMdgFbW1j1/Uc5amoXmvUwV5bVi0akraazuHgm09mVkqsBSqNZyLim5HG1xYRpsyuf8AZ6x//Gr+k9uq4RlPAkeBJmWkQONx6tMkeKU9kYo/7JW8+xq/pN6ju9i2NhhK3rTcD5z2enWW1z6akn68ZnFVQB1J4Xvx1vA8jw242PfjQyeLVKaj5En5SybK9nFrHEVtP/jpfm7D8hL2K4uLDlc6fLSSNRiNBbXnppAwbK2JhsIMtGktO/Pix82Opm4avC3P1+Mx5TfU8rW4c7ySgDQQEE6663/n4yQhCA4oQgRMypIWk0EDIIGIRwFCEIGGEIQCAijEBwihAJwN7NmV64Q0ahTISWTMyhgbWOnMW+ZnfkXktXlGpHn+yK1ahie8Cxc2N82pUcjw1FvhLfsnaHb5mA7mbKjfthdGcfu3uB5X5yr7y16dem/Y1VYqbMUYFlF9foZbdn0FRVCCyqoVR0UCwmrHGpmN9M7eQ3bRWkhCbmCOWY3WZ5FlgYcojAjIhAclIxiA44o4BCKMCAwJMLEomSBELGI5GBKEUcAhCEDXjkYXgOMSN5IQHHFHAJjrC4mSYcQ4Ckk2AF7+EDzbbmyhhHNaiTkL5Cp/eYgp4iXzYlZnpKzCxIGnQ2F/neUza2NXGotOkxQ1K5phiLlSBfNb8NzLrgKGRVQXsoAuTcm3MnmZoxxHKePjOf8AmG+I4hHN7AxHEI4ECsiVmWIiBitGJO0LQIRyVowICAkgIASQEAElFHARkZIyMBiSkAZKA4QhA1YorwvAlJCQEkIEhHEIEwGTOftVe0ptTvbMpW/S4teZsViQgJJAAFySbAAczKhtHeEVbpQBfMCA+q3sO8QLXsNNZhe8VjtYjbFujhLFiRmy1Sob7oIAUlTzl5oLYSl7s7VVclGouX7odfdzE293l0vrLwomGDjx6ZXns4QhNzAxHEI4BCEIBCEcBR2hCAxHEI4CjijEAMhJmQMAkgZC8YgTvHIXhA0zJwhABJCOEBxNCECv71f2ep+Ef6hK5ux/Wj+6b/WYQnNk/kq2U8ls4T+3j+8H0MvoihMsH7f2wk4QhN6JCEIQCEIQCMQhAIQhAI44QFHCEAMgYQgIxiEIBCEIH//Z', name: 'Kids Sneakers 2', price: 320000},
+    {category: 'sport', img: 'data:image/jpeg;base64,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', name: 'Kids Sport 1', price: 350000},
+    {category: 'sport', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfuLAMnh2sr650H29UHe89t1NmLsDAR8Gtpg&s', name: 'Kids Sport 2', price: 360000},
+    {category: 'casual', img: 'https://cf.shopee.co.id/file/kids_casual1.jpg', name: 'Kids Casual 1', price: 250000},
+    {category: 'casual', img: 'https://cf.shopee.co.id/file/kids_casual2.jpg', name: 'Kids Casual 2', price: 260000}
+];
+
+const kidsSlides = document.getElementById('kidsSlides');
+let kidsSlideIndex = 0; 
+let kidsSlideInterval;
+
+// AUTOMATIC SLIDER ANAK
+function loadKidsSlider(category) {
+    kidsSlides.innerHTML = '';
+    const filtered = kidsProductsData.filter(p => p.category === category);
+    filtered.forEach(p => {
+        const img = document.createElement('img');
+        img.src = p.img;
+        img.alt = p.name;
+        kidsSlides.appendChild(img);
+    });
+    kidsSlideIndex = 0;
+    kidsSlides.style.transform = 'translateX(0%)';
+
+    if(kidsSlideInterval) clearInterval(kidsSlideInterval);
+    if(filtered.length > 1){
+        kidsSlideInterval = setInterval(() => {
+            nextSlide('kids');
+        }, 3000);
+    }
+
+    // Update produk anak di bawah slider
+    const kidsContainer = document.getElementById('kidsProducts');
+    kidsContainer.innerHTML = '';
+    filtered.forEach(p => {
+        const div = document.createElement('div');
+        div.classList.add('product');
+        div.innerHTML = `
+            <img src="${p.img}" alt="${p.name}">
+            <h3>${p.name}</h3>
+            <p class="price">Rp ${p.price.toLocaleString()}</p>
+            <button onclick="addToCart('${p.name}', ${p.price})">Tambah ke Keranjang</button>
+        `;
+        kidsContainer.appendChild(div);
+    });
+}
+
+// Navigasi slider manual
+function nextSlide(sliderType) {
+    if(sliderType === 'main'){
+        mainIndex = (mainIndex + 1) % mainImages.length;
+        mainSlides.style.transform = `translateX(-${mainIndex * 100}%)`;
+    } else {
+        const imgs = kidsSlides.querySelectorAll('img');
+        kidsSlideIndex = (kidsSlideIndex + 1) % imgs.length;
+        kidsSlides.style.transform = `translateX(-${kidsSlideIndex * 100}%)`;
+    }
+}
+
+function prevSlide(sliderType) {
+    if(sliderType === 'main'){
+        mainIndex = (mainIndex - 1 + mainImages.length) % mainImages.length;
+        mainSlides.style.transform = `translateX(-${mainIndex * 100}%)`;
+    } else {
+        const imgs = kidsSlides.querySelectorAll('img');
+        kidsSlideIndex = (kidsSlideIndex - 1 + imgs.length) % imgs.length;
+        kidsSlides.style.transform = `translateX(-${kidsSlideIndex * 100}%)`;
+    }
+}
+
+// Filter menu anak
+function filterKidsSlider(category) {
+    loadKidsSlider(category);
+}
+
+// Load default kategori anak
+loadKidsSlider('sneakers');
+</script>
+<div class="penjual">
+            <h2>Penjual</h2>
+            <p><strong>Nama:</strong> MATTKICK SHOES STORE</p>
+            <p><strong>Alamat:</strong> Jl. Setia Budi No.123, Kota Medan, Sumatera Utara</p>
+            <p><strong>Telepon:</strong> 0812-3456-7890</p>
+        </div>
+    </div>
+
+</body>
+</html>
